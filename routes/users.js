@@ -9,7 +9,7 @@ router.get('/', usersController.getUsers);
 
 router.get('/:id', usersController.getUserById);
 
-router.get('/:id/notifications', usersController.getUserNotifications);
+router.get('/:id/notifications', usersController.getUsersNotifications);
 
 router.post('/', [
     check('name').not().isEmpty(),
