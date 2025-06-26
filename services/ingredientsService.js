@@ -1,7 +1,7 @@
-const { Ingredients } = require("../db/database");
+const Ingredient = require("../db/models/Ingredient");
 
 const getIngredients = async () => {
-    return await Ingredients.find();
+    return await Ingredient.find();
   };
 
 module.exports = {

@@ -1,5 +1,5 @@
 //Con Mongo
-const { User } = require("../db/database"); // Ver que User sea un modelo Mongoose válido
+const User = require("../db/models/User"); // Ver que User sea un modelo Mongoose válido
 
 const getUsers = async () => {
     return await User.find();

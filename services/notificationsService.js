@@ -1,7 +1,7 @@
-const { Notifications } = require("../db/database");
+const Notification = require("../db/models/Notification");
 
 const getNotifications = async () => {
-    return await Notifications.find();
+    return await Notification.find();
   };
 
 module.exports = {

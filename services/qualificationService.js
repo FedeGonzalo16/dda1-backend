@@ -1,7 +1,7 @@
-const { Qualifications } = require("../db/database");
+const Qualification = require("../db/models/Qualification");
 
 const getQualifications = async () => {
-    return await Qualifications.find();
+    return await Qualification.find();
   };
 
 module.exports = {

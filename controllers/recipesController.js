@@ -1,67 +1,66 @@
 const RecipesService = require('../services/recipesService');
 
-class RecipesController {
-
-  async getRecipes(req, res) {
-    try {
-      const recipes = await RecipesService.getRecipes();
-      return res.status(200).json({
-        method: "getRecipes",
-        message: "Recipes retrieved successfully",
-        recipes: recipes,
-      });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({
-        method: "getRecipes",
-        message: "Server Error",
-      });
-    }
+const getRecipes = async (req, res) => {
+  try {
+    const recipes = await RecipesService.getRecipes();
+    return res.status(200).json({
+      method: "getRecipes",
+      message: "Recipes retrieved successfully",
+      recipes: recipes,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getRecipes",
+      message: "Server Error",
+    });
   }
+};
 
-  async getRecipeById(req, res) {
-    try {
-      const { id } = req.params;
-      const recipe = await RecipesService.getRecipeById(id);
+const getRecipeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const recipe = await RecipesService.getRecipeById(id);
 
-      if (!recipe) {
-        return res.status(404).json({
+    if (!recipe) {
+      return res.status(404).json({
         method: "getRecipeById",
         message: "Recipe not found",
-        });
-      }
-
-      return res.status(200).json({
-        method: "getRecipeById",
-        message: "Recipe details retrieved successfully",
-        recipe: recipe,
       });
-  } catch (err) { //ver si sacar
+    }
+
+    return res.status(200).json({
+      method: "getRecipeById",
+      message: "Recipe details retrieved successfully",
+      recipe: recipe,
+    });
+  } catch (err) {
     console.error(err);
     return res.status(500).json({
       method: "getRecipeById",
       message: "Internal Server Error",
     });
   }
-}
+};
 
-  async getRecipeIngredients(req, res) {
-    try {
-      const ingredients = await RecipesService.getRecipeIngredients;
-      return res.status(200).json({
-        method: "getRecipeIngredients",
-        message: "Ingredients retrieved successfully",
-        ingredients: ingredients,
-      });
-    } catch (err) {
-        return res.status(500).json({
-          method: "getRecipeIngredients",
-          message: "Internal Server Error",
-      });
-    }
+const getRecipeIngredients = async (req, res) => {
+  try {
+    const ingredients = await RecipesService.getRecipeIngredients();
+    return res.status(200).json({
+      method: "getRecipeIngredients",
+      message: "Ingredients retrieved successfully",
+      ingredients: ingredients,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getRecipeIngredients",
+      message: "Internal Server Error",
+    });
   }
+};
 
-  async getRecipeComments(req, res) {
+const getRecipeComments = async (req, res) => {
   try {
     const comments = await RecipesService.getRecipeComments();
     return res.status(200).json({
@@ -76,9 +75,9 @@ class RecipesController {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-  async getRecipeProcediments(req, res) {
+const getRecipeProcediments = async (req, res) => {
   try {
     const procediments = await RecipesService.getRecipeProcediments();
     return res.status(200).json({
@@ -93,9 +92,9 @@ class RecipesController {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-  async getRecipeQualifications(req, res) {
+const getRecipeQualifications = async (req, res) => {
   try {
     const qualifications = await RecipesService.getRecipeQualifications();
     return res.status(200).json({
@@ -110,9 +109,9 @@ class RecipesController {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-  async createRecipe(req, res) {
+const createRecipe = async (req, res) => {
   try {
     const newRecipe = await RecipesService.createRecipe(req.body);
     return res.status(201).json({
@@ -127,13 +126,13 @@ class RecipesController {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async updateRecipe(req, res) {
+const updateRecipe = async (req, res) => {
   const { id } = req.params;
   try {
-    await RecipesService.updateRecipe(req.body, Number(id));
-    const recipe = await RecipesService.getRecipeById(Number(id));
+    await RecipesService.updateRecipe(req.body, id);
+    const recipe = await RecipesService.getRecipeById(id);
     if (!recipe) {
       return res.status(404).json({
         method: "updateRecipe",
@@ -152,9 +151,9 @@ async updateRecipe(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async deleteRecipe(req, res) {
+const deleteRecipe = async (req, res) => {
   try {
     const recipe = await RecipesService.getRecipeById(req.params.id);
     if (!recipe) {
@@ -163,7 +162,7 @@ async deleteRecipe(req, res) {
         message: "Recipe not found",
       });
     }
-    await RecipesService.deleteUserById(req.params.id);
+    await RecipesService.deleteRecipeById(req.params.id);
     return res.status(200).json({
       method: "deleteRecipe",
       message: "Recipe deleted successfully",
@@ -175,7 +174,16 @@ async deleteRecipe(req, res) {
       message: "Internal Server Error",
     });
   }
-}
-}
+};
 
-module.exports = new RecipesController();
+module.exports = {
+  getRecipes,
+  getRecipeById,
+  getRecipeIngredients,
+  getRecipeComments,
+  getRecipeProcediments,
+  getRecipeQualifications,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+};

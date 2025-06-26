@@ -1,11 +1,7 @@
 const UsersService = require('../services/usersService');
-const jwt = require("jsonwebtoken");//ver si implementar
 const authenticationService = require("../services/authService");
-const bycrypt = require("bcrypt");
 
-class UsersController {
-
-  async getUsers(req, res) {
+const getUsers = async (req, res) => {
   try {
     const users = await UsersService.getUsers();
     return res.status(200).json({
@@ -20,9 +16,9 @@ class UsersController {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async getUserById(req, res) {
+const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await UsersService.getUserById(id);
@@ -46,11 +42,12 @@ async getUserById(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async getUsersNotifications(req, res) {
+const getUsersNotifications = async (req, res) => {
   try {
-    const notifications = await UsersService.getUsersNotifications();
+    const { id } = req.params;
+    const notifications = await UsersService.getUsersNotifications(id);
     return res.status(200).json({
       method: "getUsersNotifications",
       message: "Notifications retrieved successfully",
@@ -63,9 +60,9 @@ async getUsersNotifications(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async createUser(req, res) {
+const createUser = async (req, res) => {
   try {
     const newUser = await UsersService.createUser(req.body);
     return res.status(201).json({
@@ -80,16 +77,13 @@ async createUser(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async updateUser(req, res) {
+const updateUser = async (req, res) => {
   const { id } = req.params;
   try {
-    if (req.body.password) {
-      req.body.password = bcrypt.hashSync(req.body.password, 10);
-    }
-    await UsersService.updateUser(req.body, Number(id));
-    const user = await UsersService.getUserById(Number(id));
+    await UsersService.updateUser(req.body, id);
+    const user = await UsersService.getUserById(id);
 
     if (!user) {
       return res.status(404).json({
@@ -110,9 +104,9 @@ async updateUser(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-async login(req, res) {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await UsersService.getUserByEmail(email);
@@ -123,25 +117,16 @@ async login(req, res) {
         message: "Unauthorized. Invalid email or password",
       });
     }
-
-    // Comparar la contraseña usando bcrypt
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    if (password != user.password) {
       return res.status(401).json({
         method: "login",
         message: "Unauthorized. Invalid email or password",
       });
     }
 
-    // Generar token JWT
-    const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
-      expiresIn: '1d',
-    });
-
     return res.status(200).json({
       method: "login",
-      message: "Login successful",
-      token: token,
+      message: "Login successful"
     });
   } catch (err) {
     console.error(err);
@@ -150,7 +135,13 @@ async login(req, res) {
       message: "Internal Server Error",
     });
   }
-}
-}
+};
 
-module.exports = new UsersController();
+module.exports = {
+  getUsers,
+  getUserById,
+  getUsersNotifications,
+  createUser,
+  updateUser,
+  login,
+};

@@ -1,7 +1,7 @@
-const { Procediments } = require("../db/database");
+const Procediment = require("../db/models/Procedure");
 
 const getProcediments = async () => {
-    return await Procediments.find();
+    return await Procediment.find();
   };
 
 module.exports = {

@@ -1,5 +1,5 @@
 //Con Mongo
-const { Recipe } = require("../db/database");
+const Recipe = require("../db/models/Recipe");
 
 const getRecipes = async () => {
     return await Recipe.find();

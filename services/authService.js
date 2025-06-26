@@ -1,6 +1,5 @@
 require("dotenv").config();
-const bcrypt = require("bcrypt");
-const {User} = require("../db/db");
+const User = require("../db/models/User");
 
 class AuthService {
     //Lo mismo para mongo
@@ -11,8 +10,7 @@ class AuthService {
         return false;
       }
       console.log(user);
-      const isPasswordValid = await bcrypt.compare(password, user.contrasenia);
-      if(isPasswordValid){
+      if(password === user.contrasenia) {
         return true;
       }
       return false

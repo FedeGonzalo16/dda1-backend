@@ -9,9 +9,9 @@ router.get('/', recipesController.getRecipes);
 
 router.get('/:id', recipesController.getRecipeById);
 
-router.get('/:id/ingredients', recipesController.getIngredients());
-router.get('/:id/procedures', recipesController.getProcedures());
-router.get('/:id/qualifications', recipesController.getQualifications());
+router.get('/:id/ingredients', recipesController.getRecipeIngredients);
+router.get('/:id/procedures', recipesController.getRecipeProcediments);
+router.get('/:id/qualifications', recipesController.getRecipeQualifications);
 
 router.post('/', [
     check('name').not().isEmpty(),

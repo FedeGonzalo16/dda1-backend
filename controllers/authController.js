@@ -1,7 +1,5 @@
 const AuthService = require('../services/authService');
-const jwt = require('jsonwebtoken');
-//Ver si implementar jwt
-const jwt = require("jsonwebtoken");
+
 
 exports.login = async (req, res) => {
   try {
@@ -22,17 +20,6 @@ exports.login = async (req, res) => {
         message: "User not found.",
       });
     }
-
-    // Validar que la clave privada esté configurada
-    if (!process.env.PRIVATE_KEY) {
-      throw new Error("PRIVATE_KEY is not defined in environment variables.");
-    }
-
-    // Crear el token JWT
-    const userPayload = user.toJSON ? user.toJSON() : { id: user.id, email: user.email };
-    const token = jwt.sign(userPayload, process.env.PRIVATE_KEY, {
-      expiresIn: "1d",
-    });
 
     // Respuesta exitosa
     return res.status(200).json({
