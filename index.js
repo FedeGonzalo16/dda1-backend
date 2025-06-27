@@ -9,6 +9,7 @@ const notificationRoutes = require('./routes/notifications');
 const ingredientRoutes = require('./routes/ingredients');
 const qualificationRoutes = require('./routes/qualifications');
 const prodecedureRoutes = require('./routes/procediments');
+const tagsRoutes = require('./routes/tags');
 
 const { connectDB } = require('./db/database');
 
@@ -36,6 +37,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/qualifications', qualificationRoutes);
 app.use('/api/procedure', prodecedureRoutes);
+app.use('/api/tags', tagsRoutes);
 
 const PORT = 8080;
 app.listen(PORT, () => {
