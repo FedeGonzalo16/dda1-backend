@@ -1,5 +1,5 @@
 const UsersService = require('../services/usersService');
-const authenticationService = require("../services/authService");
+const Cloudinary = require('../services/cloudinary');
 
 const getUsers = async (req, res) => {
   try {
@@ -64,6 +64,31 @@ const getUsersNotifications = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
+    if (req.file){
+      const user = await UsersService.getUserByEmail(req.body.email);
+      if (user) {
+        return res.status(400).json({
+          method: "createUser",
+          message: "User already exists with this email",
+        });
+      }
+      const fileBuffer = req.file.buffer;
+      const urlImg = await Cloudinary.uploadImage(fileBuffer);
+      const newUser = await UsersService.createUser({ ...req.body, imgUrl: urlImg });
+      return res.status(201).json({
+        method: "createUser",
+        message: "User created successfully",
+        user: newUser,
+      });
+      
+    }
+    const user = await UsersService.getUserByEmail(req.body.email);
+    if (user) {
+      return res.status(400).json({
+        method: "createUser",
+        message: "User already exists with this email",
+      });
+    }
     const newUser = await UsersService.createUser(req.body);
     return res.status(201).json({
       method: "createUser",
@@ -106,6 +131,32 @@ const updateUser = async (req, res) => {
   }
 };
 
+const getUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await UsersService.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        method: "getUserByEmail",
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      method: "getUserByEmail",
+      message: "User details retrieved successfully",
+      user: user,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getUserByEmail",
+      message: "Internal Server Error",
+    });
+  }
+}
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -144,4 +195,5 @@ module.exports = {
   createUser,
   updateUser,
   login,
+  getUserByEmail
 };

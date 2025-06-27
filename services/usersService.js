@@ -29,6 +29,9 @@ const createUser = async (user) => {
     return await User.create(user); // Mongoose maneja automáticamente la inserción
 };
 
+const getUserByEmail = async (email) => {
+    return await User.find({ email: email });
+}
 
 module.exports = {
   getUsers,
@@ -36,5 +39,6 @@ module.exports = {
   getUsersNotifications,
   login,
   createUser,
-  updateUser
+  updateUser,
+  getUserByEmail
 };
