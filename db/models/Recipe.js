@@ -8,6 +8,21 @@ const RecipeSchema = new mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   procedures: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Procedure' }],
   ingredients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }],
+  type: {
+    type: String,
+    enum: [
+      "Entrada",
+      "Plato principal",
+      "Guarnición",
+      "Postre",
+      "Bebida",
+      "Ensalada",
+      "Sopa",
+      "Snack",
+      "Desayuno"
+    ],
+    required: true,
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Recipe', RecipeSchema);

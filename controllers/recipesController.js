@@ -115,7 +115,7 @@ const getRecipeQualifications = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const { name, tags, author, procedures, ingredients, description } = req.body;
+    const { name, tags, author, procedures, ingredients, description, type } = req.body;
 
     const parsedTags = tags ? JSON.parse(tags) : [];
     const parsedProcedures = procedures ? JSON.parse(procedures) : [];
@@ -137,6 +137,7 @@ const createRecipe = async (req, res) => {
       ingredients: parsedIngredients,
       image: imageUrl,
       description: description || '', // Ensure description is included
+      type: type || 'Plato principal', // Default to 'Plato principal' if not provided
     };
 
     const newRecipe = await RecipesService.createRecipe(recipeData);
