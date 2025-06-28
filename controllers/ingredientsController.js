@@ -17,6 +17,24 @@ const getIngredients = async (req, res) => {
   }
 };
 
+const createIngredient = async (req, res) => {
+  try{
+    const newIngredient = await IngredientsService.createIngredient(req.body);
+    return res.status(201).json({
+      method: "createIngredient",
+      message: "Ingredient created successfully",
+      ingredient: newIngredient,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "createIngredient",
+      message: "Server Error",
+    });
+  }
+}
+
 module.exports = {
   getIngredients,
+  createIngredient
 };

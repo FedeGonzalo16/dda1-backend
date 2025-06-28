@@ -41,6 +41,10 @@ const deleteRecipe = async (id) => {
     return deletedRecipe;
 };
 
+const getRecipeByName = async (name) => {
+  return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') });
+};
+
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -49,5 +53,6 @@ module.exports = {
   getQualifications,
   createRecipe,
   updateRecipe,
-  deleteRecipe
+  deleteRecipe,
+  getRecipeByName,
 };

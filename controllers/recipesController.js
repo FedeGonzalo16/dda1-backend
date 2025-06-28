@@ -1,4 +1,6 @@
 const RecipesService = require('../services/recipesService');
+const CloudinaryService = require('../services/cloudinary');
+const mongoose = require('mongoose');
 
 const getRecipes = async (req, res) => {
   try {
@@ -113,18 +115,39 @@ const getRecipeQualifications = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const newRecipe = await RecipesService.createRecipe(req.body);
+    const { name, tags, author, procedures, ingredients, description } = req.body;
+
+    const parsedTags = tags ? JSON.parse(tags) : [];
+    const parsedProcedures = procedures ? JSON.parse(procedures) : [];
+    const parsedIngredients = ingredients ? JSON.parse(ingredients) : [];
+
+
+
+    let imageUrl = '';
+    if (req.file) {
+      const fileBuffer = req.file.buffer;
+      imageUrl = await CloudinaryService.uploadImage(fileBuffer);
+    }
+
+    const recipeData = {
+      name,
+      tags: parsedTags,
+      author,
+      procedures: parsedProcedures,
+      ingredients: parsedIngredients,
+      image: imageUrl,
+      description: description || '', // Ensure description is included
+    };
+
+    const newRecipe = await RecipesService.createRecipe(recipeData);
     return res.status(201).json({
       method: "createRecipe",
       message: "Recipe created successfully",
       recipe: newRecipe,
     });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      method: "createRecipe",
-      message: "Internal Server Error",
-    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error creating recipe' });
   }
 };
 

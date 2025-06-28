@@ -2,8 +2,11 @@ const {Router} = require('express');
 const recipesController = require('../controllers/recipesController');
 const validateRequest = require('../middlewares/requestValidator');
 const { check } = require('express-validator');
+const multer = require('multer');
 
 const router = Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.get('/', recipesController.getRecipes);
 
@@ -17,9 +20,9 @@ router.post('/', [
     check('name').not().isEmpty(),
     check('procedures').not().isEmpty(),
     check('ingredients').not().isEmpty(),
-    check('tags').not().isEmpty(),
-    validateRequest
+    check('tags'),
 ],
+upload.single('media'),
 recipesController.createRecipe)
 
 router.put('/:id', [
