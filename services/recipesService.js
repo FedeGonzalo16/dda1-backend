@@ -2,11 +2,16 @@
 const Recipe = require("../db/models/Recipe");
 
 const getRecipes = async () => {
-    return await Recipe.find();
+    return await Recipe.find()
+    .populate('ingredients')
+    .populate('procedures')
+    .populate('author')
   };
 
 const getRecipeById = async (id) => {
-    return await Recipe.findById(id);
+    return await Recipe.findById(id)
+    .populate('ingredients')
+    .populate('procedures');
 };
 
 const getIngredients = async (id) => {

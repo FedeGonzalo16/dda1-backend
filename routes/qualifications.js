@@ -4,5 +4,7 @@ const qualificationsController = require('../controllers/qualificationsControlle
 const router = Router();
 
 router.get('/', qualificationsController.getQualifications);
+router.get('/recipe/:recipeId', qualificationsController.getQualificationsByRecipeId);
+router.post('/', qualificationsController.createQualification);
 
 module.exports = router;
