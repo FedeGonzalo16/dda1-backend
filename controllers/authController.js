@@ -1,7 +1,7 @@
 const AuthService = require('../services/authService');
 
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -24,8 +24,8 @@ exports.login = async (req, res) => {
     // Respuesta exitosa
     return res.status(200).json({
       status: 200,
-      token,
-      message: "Token created successfully",
+      message: "Login successfully",
+      user:user
     });
   } catch (err) {
     console.error("Error during login:", err);
@@ -36,3 +36,7 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+module.exports = {
+  login
+}

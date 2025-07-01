@@ -30,7 +30,7 @@ const createUser = async (user) => {
 };
 
 const getUserByEmail = async (email) => {
-    return await User.find({ email: email });
+    return await User.findOne({ email: email });
 }
 
 module.exports = {

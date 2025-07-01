@@ -5,7 +5,7 @@ const validateRequest = require('../middlewares/requestValidator');
 
 const router = Router();
 
-router.post('/signin', [
+router.post('/', [
   check('email').isEmail(),
   check('password').not().isEmpty(),
   validateRequest,  

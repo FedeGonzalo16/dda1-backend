@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors'); 
 const dotenv = require('dotenv');
 
-//const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const recipeRoutes = require('./routes/recipes');
 const notificationRoutes = require('./routes/notifications');
@@ -31,7 +31,7 @@ app.on('error', (err) => {
 });
 
 app.use('/api/users', userRoutes);
-//app.use('/api/login', authRoutes);
+app.use('/api/login', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ingredients', ingredientRoutes);
