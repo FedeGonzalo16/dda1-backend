@@ -10,6 +10,7 @@ const getRecipes = async () => {
 
 const getRecipeById = async (id) => {
     return await Recipe.findById(id)
+    .populate('author')
     .populate('ingredients')
     .populate('procedures');
 };

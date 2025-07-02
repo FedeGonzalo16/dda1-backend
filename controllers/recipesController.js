@@ -140,7 +140,8 @@ const createRecipe = async (req, res) => {
       type: type || 'Plato principal', // Default to 'Plato principal' if not provided
     };
 
-    const newRecipe = await RecipesService.createRecipe(recipeData);
+    const recipe = await RecipesService.createRecipe(recipeData);
+    const newRecipe = await RecipesService.getRecipeById(recipe._id);
     return res.status(201).json({
       method: "createRecipe",
       message: "Recipe created successfully",
