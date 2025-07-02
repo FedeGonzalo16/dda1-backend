@@ -199,9 +199,7 @@ const addFavorite = async (req, res) => {
   }
 };
 const removeFavorite = async (req, res) => {
-  const { userId } = req.params;
-  const { recipeId } = req.body;
-
+  const { recipeId, userId } = req.body;
   try {
     await UsersService.removeFavorite(userId, recipeId);
     res.status(200).json({ message: 'Receta eliminada de favoritos' });

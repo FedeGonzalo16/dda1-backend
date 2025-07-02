@@ -6,7 +6,7 @@ const getUsers = async () => {
 };
 
 const getUserById = async (id) => {
-    return await User.findById(id);
+    return await User.findById(id).populate('favorites');
 };
 
 const getUsersNotifications = async (id) => {
@@ -30,7 +30,7 @@ const createUser = async (user) => {
 };
 
 const getUserByEmail = async (email) => {
-    return await User.findOne({ email: email });
+    return await User.findOne({ email: email }).populate('favorites');
 };
 
 const addFavorite = async (userId, recipeId) => {
