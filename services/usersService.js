@@ -31,14 +31,54 @@ const createUser = async (user) => {
 
 const getUserByEmail = async (email) => {
     return await User.findOne({ email: email });
-}
+};
+
+const addFavorite = async (userId, recipeId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error('Usuario no encontrado');
+
+  if (!user.favorites.includes(recipeId)) {
+    user.favorites.push(recipeId);
+    await user.save();
+  }
+
+  return user;
+};
+
+const removeFavorite = async (userId, recipeId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error('Usuario no encontrado');
+
+  user.favorites = user.favorites.filter(
+    (favId) => favId.toString() !== recipeId
+  );
+  await user.save();
+
+  return user;
+};
+
+const getFavorites = async (userId) => {
+    const user = await User.findById(userId)
+    .populate({
+      path: 'favorites',
+      populate: {
+        path: 'author'
+      }
+    });
+  if (!user) throw new Error('Usuario no encontrado');
+
+  return user.favorites;
+};
 
 module.exports = {
-  getUsers,
-  getUserById,
-  getUsersNotifications,
-  login,
-  createUser,
-  updateUser,
-  getUserByEmail
+    getUsers,
+    getUserById,
+    getUsersNotifications,
+    login,
+    createUser,
+    updateUser,
+    getUserByEmail,
+    addFavorite,
+    removeFavorite,
+    getFavorites
 };

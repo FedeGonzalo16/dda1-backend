@@ -187,7 +187,40 @@ const login = async (req, res) => {
     });
   }
 };
+const addFavorite = async (req, res) => {
+  const { userId,recipeId } = req.body;
 
+  try {
+    await UsersService.addFavorite(userId, recipeId);
+    res.status(200).json({ message: 'Receta guardada en favoritos' });
+  } catch (err) {
+    console.error('Error al agregar favorito:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+const removeFavorite = async (req, res) => {
+  const { userId } = req.params;
+  const { recipeId } = req.body;
+
+  try {
+    await UsersService.removeFavorite(userId, recipeId);
+    res.status(200).json({ message: 'Receta eliminada de favoritos' });
+  } catch (err) {
+    console.error('Error al quitar favorito:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+const getFavorites = async (req, res) => {
+  const { id: userId } = req.params;
+  console.log('userId', userId);
+  try {
+    const favorites = await UsersService.getFavorites(userId);
+    res.status(200).json({ favorites });
+  } catch (err) {
+    console.error('Error al obtener favoritos:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
 module.exports = {
   getUsers,
   getUserById,
@@ -195,5 +228,8 @@ module.exports = {
   createUser,
   updateUser,
   login,
-  getUserByEmail
+  getUserByEmail,
+  addFavorite,
+  removeFavorite,
+  getFavorites
 };

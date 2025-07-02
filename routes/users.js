@@ -17,12 +17,16 @@ router.post('/', [
     check('password').isLength({min: 6}),
     validateRequest
 ],
-usersController.createUser)
+usersController.createUser);
 
 router.put('/:id', [
     check('email').not().isEmpty(),
     validateRequest
 ],
-usersController.updateUser)
+usersController.updateUser);
+
+router.post('/fav',usersController.addFavorite);
+router.delete('/fav',usersController.removeFavorite);
+router.get('/fav/:id', usersController.getFavorites);
 
 module.exports = router;
