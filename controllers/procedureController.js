@@ -22,13 +22,11 @@ const createProcediment = async (req, res) => {
   try {
     console.log('req.body:', req.body);
     console.log('req.file:', req.file);
-    let mediaUrls = [];
 
     if (req.file){
       const fileBuffer = req.file.buffer;
       const urlImg = await CloudinaryService.uploadImage(fileBuffer);
-      mediaUrls = [urlImg];
-      const newProcedure = await ProcedimentsService.createProcedure({ ...req.body, media: mediaUrls });
+      const newProcedure = await ProcedimentsService.createProcedure({ ...req.body, media: urlImg });
       return res.status(201).json({
         method: "createProcediment",
         message: "Procediment created successfully",
