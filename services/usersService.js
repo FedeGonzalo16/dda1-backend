@@ -6,7 +6,13 @@ const getUsers = async () => {
 };
 
 const getUserById = async (id) => {
-    return await User.findById(id).populate('favorites');
+    return await User.findById(id).populate({
+      path: 'favorites',
+      populate: {
+        path: 'author',
+        select: 'name', // o 'name', depende cómo se llame en tu modelo
+      }
+    });;
 };
 
 const getUsersNotifications = async (id) => {
