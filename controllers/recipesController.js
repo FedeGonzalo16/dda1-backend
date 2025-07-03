@@ -201,6 +201,30 @@ const deleteRecipe = async (req, res) => {
   }
 };
 
+const getRecipesByUserId = async (req, res) => {
+  const { userId } = req.params;
+  try{
+    const recipes = await RecipesService.getRecipesByUserId(userId);
+    if (!recipes || recipes.length === 0) {
+      return res.status(404).json({
+        method: "getRecipesByUserId",
+        message: "No recipes found for this user",
+      });
+    }else{
+      return res.status(200).json({
+        method: "getRecipesByUserId",
+        message: "Recipes retrieved successfully",
+        recipes: recipes,
+      });
+    }
+  }catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getRecipesByUserId",
+      message: "Internal Server Error",
+    });
+  }
+}
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -211,4 +235,5 @@ module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  getRecipesByUserId
 };
