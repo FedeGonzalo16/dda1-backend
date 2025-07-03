@@ -3,7 +3,23 @@ const usersController = require('../controllers/usersController');
 const validateRequest = require('../middlewares/requestValidator');
 const { check } = require('express-validator');
 
+const upload = require('../middlewares/uploadImage');
+
 const router = Router();
+
+router.put('/:id', 
+  upload.single('image'), 
+  [
+    check('email').not().isEmpty(),
+    validateRequest
+  ],
+  usersController.updateUser
+);
+
+router.put('/:id',
+  upload.single('image'), // 👈 Middleware de imagen
+  usersController.updateUser
+);
 
 router.get('/', usersController.getUsers);
 
