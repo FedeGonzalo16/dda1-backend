@@ -50,7 +50,12 @@ const deleteRecipe = async (id) => {
 const getRecipeByName = async (name) => {
   return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') });
 };
-
+const getRecipesByUserId = async (userId) => {
+  return await Recipe.find({ author: userId })
+    .populate('author')
+    .populate('ingredients')
+    .populate('procedures');
+};
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -61,4 +66,5 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   getRecipeByName,
+  getRecipesByUserId
 };

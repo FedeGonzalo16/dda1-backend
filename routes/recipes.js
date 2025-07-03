@@ -11,7 +11,7 @@ const upload = multer({ storage });
 router.get('/', recipesController.getRecipes);
 
 router.get('/:id', recipesController.getRecipeById);
-
+router.get('/user/:userId', recipesController.getRecipesByUserId);
 router.get('/:id/ingredients', recipesController.getRecipeIngredients);
 router.get('/:id/procedures', recipesController.getRecipeProcediments);
 router.get('/:id/qualifications', recipesController.getRecipeQualifications);
