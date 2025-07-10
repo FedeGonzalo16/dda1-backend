@@ -38,10 +38,32 @@ const getUsersNotifications = async (req, res) => {
   }
 };
 
+const generateUsernameSuggestions = async (baseName) => {
+  const suggestions = [];
+  const maxTries = 20;
+  let count = 1;
+
+  while (suggestions.length < 3 && count <= maxTries) {
+    const suggestion = `${baseName}${count}`;
+    const exists = await UsersService.getUserByUsername(suggestion);
+    if (!exists) {
+      suggestions.push(suggestion);
+    }
+
+    count++;
+  }
+  return suggestions;
+};
+
 const createUser = async (req, res) => {
   try {
     const existingUser = await UsersService.getUserByEmail(req.body.email);
     if (existingUser) return res.status(400).json({ method: "createUser", message: "User already exists with this email" });
+    const existingUsername = await UsersService.getUserByUsername(req.body.name);
+    if (existingUsername){
+      const suggestions = await generateUsernameSuggestions(req.body.name);
+      return res.status(400).json({ method: "createUser", message: "Username already exists",suggestions, });
+    } 
 
     let imgUrl = null;
     if (req.file) {
