@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   imgUrl: { type: String },
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);
