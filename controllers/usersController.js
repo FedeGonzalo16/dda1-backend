@@ -1,5 +1,9 @@
 const UsersService = require('../services/usersService');
 const Cloudinary = require('../services/cloudinary');
+const MailService = require('../services/mail');
+const fs = require('fs');
+const handlebars = require('handlebars');
+const path = require('path');
 
 const getUsers = async (req, res) => {
   try {
@@ -46,6 +50,16 @@ const createUser = async (req, res) => {
     }
 
     const newUser = await UsersService.createUser({ ...req.body, imgUrl });
+
+    const templatePath = path.resolve(__dirname, '../template/email.template.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(templateSource);
+    const htmlContent = template();
+    await MailService.sendMail(
+        req.body.email,
+        `Informacion de registro`,
+        htmlContent
+    );
     return res.status(201).json({ method: "createUser", message: "User created successfully", user: newUser });
   } catch (err) {
     console.error(err);
