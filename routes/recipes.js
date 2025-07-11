@@ -8,14 +8,16 @@ const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.get('/', recipesController.getRecipes);
 
-router.get('/:id', recipesController.getRecipeById);
+router.put('/:id/approve', recipesController.aproveRecipe);
+router.get('/', recipesController.getRecipes);
+router.get('/pending', recipesController.getPendingRecipes);
+router.get('/approved', recipesController.getApprovedRecipes);
 router.get('/user/:userId', recipesController.getRecipesByUserId);
 router.get('/:id/ingredients', recipesController.getRecipeIngredients);
 router.get('/:id/procedures', recipesController.getRecipeProcediments);
 router.get('/:id/qualifications', recipesController.getRecipeQualifications);
-
+router.get('/:id', recipesController.getRecipeById);
 router.post('/', [
     check('name').not().isEmpty(),
     check('procedures').not().isEmpty(),

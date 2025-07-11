@@ -50,12 +50,37 @@ const deleteRecipe = async (id) => {
 const getRecipeByName = async (name) => {
   return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') });
 };
+
 const getRecipesByUserId = async (userId) => {
   return await Recipe.find({ author: userId })
     .populate('author')
     .populate('ingredients')
     .populate('procedures');
 };
+
+const getPendingRecipes = async () => {
+  return await Recipe.find({ isApproved: false })
+    .populate('author')
+    .populate('ingredients')
+    .populate('procedures');
+};
+
+const aproveRecipe = async (id) => {
+  const recipe = await Recipe.findById(id);
+  if (!recipe) {
+    throw new Error('Recipe not found');
+  }
+  recipe.isApproved = true;
+  return await recipe.save();
+};
+
+const getApprovedRecipes = async () => {
+  return await Recipe.find({ isApproved: true })
+    .populate('author')
+    .populate('ingredients')
+    .populate('procedures');
+};
+
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -66,5 +91,8 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   getRecipeByName,
-  getRecipesByUserId
+  getRecipesByUserId,
+  getPendingRecipes,
+  getApprovedRecipes,
+  aproveRecipe
 };
