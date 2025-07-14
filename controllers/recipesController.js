@@ -1,5 +1,7 @@
 const RecipesService = require('../services/recipesService');
 const CloudinaryService = require('../services/cloudinary');
+const IngredientsService = require('../services/ingredientsService');
+const ProcedimentsService = require('../services/proceduresService');
 const mongoose = require('mongoose');
 
 const getRecipes = async (req, res) => {
@@ -189,24 +191,23 @@ const updateRecipe = async (req, res) => {
     await RecipesService.updateRecipe(req.params.id, recipeData);
     const recipe = await RecipesService.getRecipeById(id);
     if (!recipe) {
-      return res.status(404).json({
-        method: "updateRecipe",
-        message: "Recipe not found",
-      });
+      return res.status(404).json({ method: "updateRecipe", message: "Receta no encontrada" });
     }
+
+    const updatedRecipe = await RecipesService.getRecipeById(id);
     return res.status(200).json({
       method: "updateRecipe",
-      message: "Recipe updated successfully",
-      recipe: recipe,
+      message: "Receta actualizada correctamente",
+      recipe: updatedRecipe,
     });
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      method: "updateRecipe",
-      message: "Internal Server Error",
-    });
+    console.error('ERROR AL ACTUALIZAR:', err);
+    return res.status(500).json({ method: "updateRecipe", message: err.message });
   }
 };
+
+
 
 const deleteRecipe = async (req, res) => {
   try {
@@ -314,6 +315,41 @@ const getApprovedRecipes = async (req, res) => {
   }
 };
 
+
+const getRecipeByName = async (req, res) => {
+  try {
+    const name = req.query.name?.toString().trim();
+
+    if (!name) {
+      return res.status(400).json({
+        method: "getRecipeByName",
+        message: "Falta el parámetro 'name'",
+      });
+    }
+
+    const recipe = await RecipesService.getRecipeByName(name);
+
+    if (!recipe) {
+      return res.status(404).json({
+        method: "getRecipeByName",
+        message: "Receta no encontrada",
+      });
+    }
+
+    return res.status(200).json({
+      method: "getRecipeByName",
+      message: "Receta obtenida correctamente",
+      recipe: recipe,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getRecipeByName",
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -328,4 +364,5 @@ module.exports = {
   getPendingRecipes,
   getApprovedRecipes,
   aproveRecipe,
+  getRecipeByName
 };

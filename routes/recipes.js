@@ -11,6 +11,8 @@ const upload = multer({ storage });
 
 router.put('/:id/approve', recipesController.aproveRecipe);
 router.get('/', recipesController.getRecipes);
+router.get('/by-name', recipesController.getRecipeByName);
+
 router.get('/pending', recipesController.getPendingRecipes);
 router.get('/approved', recipesController.getApprovedRecipes);
 router.get('/user/:userId', recipesController.getRecipesByUserId);
