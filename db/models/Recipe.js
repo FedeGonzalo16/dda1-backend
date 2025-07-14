@@ -8,6 +8,10 @@ const RecipeSchema = new mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   procedures: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Procedure' }],
   ingredients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }],
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
   type: {
     type: String,
     enum: [

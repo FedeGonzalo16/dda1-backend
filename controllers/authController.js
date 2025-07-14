@@ -4,20 +4,19 @@ const AuthService = require('../services/authService');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    // Obtener el usuario autenticado
+    const user = await AuthService.getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found. Invalid email.",
+      });
+    }
 
     // Validar credenciales
     const isUserRegistered = await AuthService.hasValidateCredentials(email, password);
     if (!isUserRegistered) {
       return res.status(401).json({
-        message: "Unauthorized: Invalid email or password.",
-      });
-    }
-
-    // Obtener el usuario autenticado
-    const user = await AuthService.getUserByEmail(email);
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found.",
+        message: "Unauthorized: Invalid password.",
       });
     }
 

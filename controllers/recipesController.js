@@ -117,13 +117,11 @@ const getRecipeQualifications = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const { name, tags, author, procedures, ingredients, description, type } = req.body;
+    const { name, tags, author, procedures, ingredients, description, type, isApproved } = req.body;
 
     const parsedTags = tags ? JSON.parse(tags) : [];
     const parsedProcedures = procedures ? JSON.parse(procedures) : [];
     const parsedIngredients = ingredients ? JSON.parse(ingredients) : [];
-
-
 
     let imageUrl = '';
     if (req.file) {
@@ -138,8 +136,9 @@ const createRecipe = async (req, res) => {
       procedures: parsedProcedures,
       ingredients: parsedIngredients,
       image: imageUrl,
-      description: description || '', // Ensure description is included
-      type: type || 'Plato principal', // Default to 'Plato principal' if not provided
+      description: description || '',
+      type: type || 'Plato principal',
+      isApproved: isApproved || false,
     };
 
     const recipe = await RecipesService.createRecipe(recipeData);
@@ -286,7 +285,66 @@ const getRecipesByUserId = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-}
+};
+
+const getPendingRecipes = async (req, res) => {
+  try {
+    const pendingRecipes = await RecipesService.getPendingRecipes();
+    return res.status(200).json({
+      method: "getPendingRecipes",
+      message: "Pending recipes retrieved successfully",
+      recipes: pendingRecipes,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getPendingRecipes",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const aproveRecipe = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const recipe = await RecipesService.aproveRecipe(id);
+    if (!recipe) {
+      return res.status(404).json({
+        method: "aproveRecipe",
+        message: "Recipe not found",
+      });
+    }
+    return res.status(200).json({
+      method: "aproveRecipe",
+      message: "Recipe approved successfully",
+      recipe: recipe,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "aproveRecipe",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const getApprovedRecipes = async (req, res) => {
+  try {
+    const approvedRecipes = await RecipesService.getApprovedRecipes();
+    return res.status(200).json({
+      method: "getApprovedRecipes",
+      message: "Approved recipes retrieved successfully",
+      recipes: approvedRecipes,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getApprovedRecipes",
+      message: "Internal Server Error",
+    });
+  }
+};
+
 
 const getRecipeByName = async (req, res) => {
   try {
@@ -333,5 +391,8 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   getRecipesByUserId,
+  getPendingRecipes,
+  getApprovedRecipes,
+  aproveRecipe,
   getRecipeByName
 };

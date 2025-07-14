@@ -1,5 +1,9 @@
 const UsersService = require('../services/usersService');
 const Cloudinary = require('../services/cloudinary');
+const MailService = require('../services/mail');
+const fs = require('fs');
+const handlebars = require('handlebars');
+const path = require('path');
 
 const getUsers = async (req, res) => {
   try {
@@ -34,10 +38,32 @@ const getUsersNotifications = async (req, res) => {
   }
 };
 
+const generateUsernameSuggestions = async (baseName) => {
+  const suggestions = [];
+  const maxTries = 20;
+  let count = 1;
+
+  while (suggestions.length < 3 && count <= maxTries) {
+    const suggestion = `${baseName}${count}`;
+    const exists = await UsersService.getUserByUsername(suggestion);
+    if (!exists) {
+      suggestions.push(suggestion);
+    }
+
+    count++;
+  }
+  return suggestions;
+};
+
 const createUser = async (req, res) => {
   try {
     const existingUser = await UsersService.getUserByEmail(req.body.email);
     if (existingUser) return res.status(400).json({ method: "createUser", message: "User already exists with this email" });
+    const existingUsername = await UsersService.getUserByUsername(req.body.name);
+    if (existingUsername){
+      const suggestions = await generateUsernameSuggestions(req.body.name);
+      return res.status(400).json({ method: "createUser", message: "Username already exists",suggestions, });
+    } 
 
     let imgUrl = null;
     if (req.file) {
@@ -46,6 +72,16 @@ const createUser = async (req, res) => {
     }
 
     const newUser = await UsersService.createUser({ ...req.body, imgUrl });
+
+    const templatePath = path.resolve(__dirname, '../template/email.template.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(templateSource);
+    const htmlContent = template();
+    await MailService.sendMail(
+        req.body.email,
+        `Informacion de registro`,
+        htmlContent
+    );
     return res.status(201).json({ method: "createUser", message: "User created successfully", user: newUser });
   } catch (err) {
     console.error(err);

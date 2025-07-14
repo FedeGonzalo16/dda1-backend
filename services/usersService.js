@@ -39,6 +39,10 @@ const getUserByEmail = async (email) => {
     return await User.findOne({ email: email }).populate('favorites');
 };
 
+const getUserByUsername = async (username) => {
+  return await User.findOne({ name: username }).populate('favorites');
+};
+
 const addFavorite = async (userId, recipeId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('Usuario no encontrado');
@@ -86,5 +90,6 @@ module.exports = {
     getUserByEmail,
     addFavorite,
     removeFavorite,
-    getFavorites
+    getFavorites,
+    getUserByUsername
 };
