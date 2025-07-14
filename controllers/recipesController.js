@@ -157,6 +157,7 @@ const createRecipe = async (req, res) => {
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
   console.log(req.body);
+  console.log(req.file);
   try {
     const {
         name,
@@ -171,7 +172,7 @@ const updateRecipe = async (req, res) => {
     const parsedTags = tags ? JSON.parse(tags) : [];
     const parsedProcedures = procedures ? JSON.parse(procedures) : [];
     const parsedIngredients = ingredients ? JSON.parse(ingredients) : [];
-    let imageUrl = req.body.image || '';
+    let imageUrl = req.body.media || '';
     if (req.file) {
       const fileBuffer = req.file.buffer;
       imageUrl = await CloudinaryService.uploadImage(fileBuffer);
