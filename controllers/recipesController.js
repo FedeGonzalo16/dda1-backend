@@ -220,7 +220,7 @@ const deleteRecipe = async (req, res) => {
         message: "Recipe not found",
       });
     }
-    await RecipesService.deleteRecipeById(req.params.id);
+    await RecipesService.deleteRecipe(req.params.id);
     return res.status(200).json({
       method: "deleteRecipe",
       message: "Recipe deleted successfully",
