@@ -25,13 +25,13 @@ router.post('/', [
     check('tags'),
 ],
 upload.single('media'),
-recipesController.createRecipe)
+recipesController.createRecipe);
 
 router.put('/:id', [
     check('name').not().isEmpty(),
-    validateRequest
 ],
-recipesController.updateRecipe)
+upload.single('media'),
+recipesController.updateRecipe);
 
 router.delete('/:id',
     recipesController.deleteRecipe);

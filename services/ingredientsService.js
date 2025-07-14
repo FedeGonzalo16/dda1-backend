@@ -6,9 +6,21 @@ const getIngredients = async () => {
 const createIngredient = async (ingredientData) => {
     return await Ingredient.create(ingredientData);
   };
+const getIngredientById = async (id) => {
+    return await Ingredient.findById(id);
+  };
 
+const updateIngredient = async (id, ingredientData) => {
+    const ingredient = await Ingredient.findByIdAndUpdate(id, ingredientData, { new: true });
+    if (!ingredient) {
+      throw new Error("Ingredient not found");
+    }
+    return ingredient;
+};
 
 module.exports = {
   getIngredients,
-  createIngredient
+  createIngredient,
+  getIngredientById,
+  updateIngredient
 }

@@ -32,9 +32,59 @@ const createIngredient = async (req, res) => {
       message: "Server Error",
     });
   }
-}
+};
+
+const getIngredientById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const ingredient = await IngredientsService.getIngredientById(id);
+    if (!ingredient) {
+      return res.status(404).json({
+        method: "getIngredientById",
+        message: "Ingredient not found",
+      });
+    }
+    return res.status(200).json({
+      method: "getIngredientById",
+      message: "Ingredient retrieved successfully",
+      ingredient: ingredient,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getIngredientById",
+      message: "Server Error",
+    });
+  }
+};
+
+const updateIngredient = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedIngredient = await IngredientsService.updateIngredient(id, req.body);
+    if (!updatedIngredient) {
+      return res.status(404).json({
+        method: "updateIngredient",
+        message: "Ingredient not found",
+      });
+    }
+    return res.status(200).json({
+      method: "updateIngredient",
+      message: "Ingredient updated successfully",
+      ingredient: updatedIngredient,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "updateIngredient",
+      message: "Server Error",
+    });
+  }
+};
 
 module.exports = {
   getIngredients,
-  createIngredient
+  createIngredient,
+  getIngredientById,
+  updateIngredient
 };

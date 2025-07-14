@@ -154,8 +154,39 @@ const createRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
+  console.log(req.body);
   try {
-    await RecipesService.updateRecipe(req.body, id);
+    const {
+        name,
+        tags,
+        author,
+        procedures,
+        ingredients,
+        description,
+        type,
+        isApproved,
+    } = req.body;
+    const parsedTags = tags ? JSON.parse(tags) : [];
+    const parsedProcedures = procedures ? JSON.parse(procedures) : [];
+    const parsedIngredients = ingredients ? JSON.parse(ingredients) : [];
+    let imageUrl = req.body.image || '';
+    if (req.file) {
+      const fileBuffer = req.file.buffer;
+      imageUrl = await CloudinaryService.uploadImage(fileBuffer);
+    };
+    const recipeData = {
+      name,
+      tags: parsedTags,
+      author,
+      procedures: parsedProcedures,
+      ingredients: parsedIngredients,
+      image: imageUrl,
+      description: description || '',
+      type: type || 'Plato principal',
+      isApproved: isApproved === 'true', // ya que viene como string de FormData
+    };
+
+    await RecipesService.updateRecipe(req.params.id, recipeData);
     const recipe = await RecipesService.getRecipeById(id);
     if (!recipe) {
       return res.status(404).json({
