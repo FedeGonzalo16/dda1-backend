@@ -183,11 +183,12 @@ const updateRecipe = async (req, res) => {
       author,
       procedures: parsedProcedures,
       ingredients: parsedIngredients,
-      image: imageUrl,
       description: description || '',
       type: type || 'Plato principal',
-      isApproved: isApproved === 'true', // ya que viene como string de FormData
     };
+    if (imageUrl && imageUrl !== '') {
+      recipeData.image = imageUrl;
+    }
 
     await RecipesService.updateRecipe(req.params.id, recipeData);
     const recipe = await RecipesService.getRecipeById(id);
