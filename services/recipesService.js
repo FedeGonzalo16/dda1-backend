@@ -36,10 +36,10 @@ const createRecipe = async (recipeData) => {
 };
 
 const updateRecipe = async (id, recipeData) => {
-    const updatedRecipe = await Recipe.findByIdAndUpdate(id, recipeData, {
-      new: true, // Retorna el documento actualizado
-    });
-    return updatedRecipe;
+  const updatedRecipe = await Recipe.findByIdAndUpdate(id, recipeData, {
+    new: true,
+  });
+  return updatedRecipe;
 };
 
 const deleteRecipe = async (id) => {
@@ -48,14 +48,20 @@ const deleteRecipe = async (id) => {
 };
 
 const getRecipeByName = async (name) => {
-  return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') });
+  return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') })
+    .populate('author')
+    .populate('ingredients')
+    .populate('procedures');
 };
+
 const getRecipesByUserId = async (userId) => {
   return await Recipe.find({ author: userId })
     .populate('author')
     .populate('ingredients')
     .populate('procedures');
 };
+
+
 module.exports = {
   getRecipes,
   getRecipeById,

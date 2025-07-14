@@ -1,5 +1,7 @@
 const RecipesService = require('../services/recipesService');
 const CloudinaryService = require('../services/cloudinary');
+const IngredientsService = require('../services/ingredientsService');
+const ProcedimentsService = require('../services/proceduresService');
 const mongoose = require('mongoose');
 
 const getRecipes = async (req, res) => {
@@ -155,28 +157,88 @@ const createRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
+
   try {
-    await RecipesService.updateRecipe(req.body, id);
-    const recipe = await RecipesService.getRecipeById(id);
-    if (!recipe) {
-      return res.status(404).json({
-        method: "updateRecipe",
-        message: "Recipe not found",
-      });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ method: "updateRecipe", message: "ID inválido" });
     }
+
+    let updatedData = {};
+
+    if (req.body.data) {
+      try {
+        updatedData = JSON.parse(req.body.data);
+      } catch (err) {
+        return res.status(400).json({ method: "updateRecipe", message: "Formato de datos inválido" });
+      }
+    } else {
+      updatedData = req.body;
+    }
+
+    if (!updatedData.name) {
+      return res.status(400).json({ method: "updateRecipe", message: "El nombre de la receta es requerido" });
+    }
+
+    // Subida de imagen
+    if (req.file) {
+      try {
+        const fileBuffer = req.file.buffer;
+        const imageUrl = await CloudinaryService.uploadImage(fileBuffer);
+        updatedData.image = imageUrl;
+      } catch (err) {
+        return res.status(500).json({ method: "updateRecipe", message: "Error al procesar imagen" });
+      }
+    }
+
+    // Crear nuevos ingredientes si vienen como objetos
+    if (Array.isArray(updatedData.ingredients)) {
+      const newIngredients = [];
+      for (const item of updatedData.ingredients) {
+        if (typeof item === 'object' && !mongoose.Types.ObjectId.isValid(item)) {
+          const created = await IngredientsService.createIngredient(item);
+          newIngredients.push(created._id);
+        } else {
+          newIngredients.push(item);
+        }
+      }
+      updatedData.ingredients = newIngredients;
+    }
+
+    // Crear nuevos procedimientos si vienen como objetos
+    if (Array.isArray(updatedData.procedures)) {
+      const newProcedures = [];
+      for (const item of updatedData.procedures) {
+        if (typeof item === 'object' && !mongoose.Types.ObjectId.isValid(item)) {
+          const created = await ProcedimentsService.createProcedure(item);
+          newProcedures.push(created._id);
+        } else {
+          newProcedures.push(item);
+        }
+      }
+      updatedData.procedures = newProcedures;
+    }
+
+    // Actualizar receta
+    const recipe = await RecipesService.updateRecipe(id, updatedData);
+
+    if (!recipe) {
+      return res.status(404).json({ method: "updateRecipe", message: "Receta no encontrada" });
+    }
+
+    const updatedRecipe = await RecipesService.getRecipeById(id);
     return res.status(200).json({
       method: "updateRecipe",
-      message: "Recipe updated successfully",
-      recipe: recipe,
+      message: "Receta actualizada correctamente",
+      recipe: updatedRecipe,
     });
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      method: "updateRecipe",
-      message: "Internal Server Error",
-    });
+    console.error('ERROR AL ACTUALIZAR:', err);
+    return res.status(500).json({ method: "updateRecipe", message: err.message });
   }
 };
+
+
 
 const deleteRecipe = async (req, res) => {
   try {
@@ -225,6 +287,41 @@ const getRecipesByUserId = async (req, res) => {
     });
   }
 }
+
+const getRecipeByName = async (req, res) => {
+  try {
+    const name = req.query.name?.toString().trim();
+
+    if (!name) {
+      return res.status(400).json({
+        method: "getRecipeByName",
+        message: "Falta el parámetro 'name'",
+      });
+    }
+
+    const recipe = await RecipesService.getRecipeByName(name);
+
+    if (!recipe) {
+      return res.status(404).json({
+        method: "getRecipeByName",
+        message: "Receta no encontrada",
+      });
+    }
+
+    return res.status(200).json({
+      method: "getRecipeByName",
+      message: "Receta obtenida correctamente",
+      recipe: recipe,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getRecipeByName",
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 module.exports = {
   getRecipes,
   getRecipeById,
@@ -235,5 +332,6 @@ module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
-  getRecipesByUserId
+  getRecipesByUserId,
+  getRecipeByName
 };

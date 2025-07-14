@@ -9,6 +9,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.get('/', recipesController.getRecipes);
+router.get('/by-name', recipesController.getRecipeByName);
 
 router.get('/:id', recipesController.getRecipeById);
 router.get('/user/:userId', recipesController.getRecipesByUserId);
@@ -25,11 +26,19 @@ router.post('/', [
 upload.single('media'),
 recipesController.createRecipe)
 
-router.put('/:id', [
-    check('name').not().isEmpty(),
+router.put('/:id',
+  upload.single('media'), 
+  [
+    check('name').not().isEmpty().withMessage('El nombre es requerido'),
+    check('description').optional(),
+    check('type').optional(),
+    check('ingredients').optional(),
+    check('procedures').optional(),
+    check('tags').optional(),
     validateRequest
-],
-recipesController.updateRecipe)
+  ],
+  recipesController.updateRecipe
+);
 
 router.delete('/:id',
     recipesController.deleteRecipe);
