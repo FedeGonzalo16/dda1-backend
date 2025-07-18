@@ -49,16 +49,6 @@ const sendRecoveryCode = async (req, res) => {
         message: "User not found. Invalid email.",
       });
     }
-    const templatePath = path.resolve(__dirname, '../template/email.template.hbs');
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars.compile(templateSource);
-    const htmlContent = template();
-    await MailService.sendMail(
-        req.body.email,
-        `Codigo para recuperar tu cuenta`,
-        htmlContent
-    );
-
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     await AuthService.createVerificationCode(email, code);
     await MailService.sendMail(
