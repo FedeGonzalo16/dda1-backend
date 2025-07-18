@@ -1,15 +1,17 @@
-const dotenv = require('dotenv');
-const {
-  Resend
-} = require('resend');
-dotenv.config();
+const nodemailer = require("nodemailer");
 
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+        user: 'hoyt.gleichner@ethereal.email',
+        pass: 'hY7TuZNetyBkBUqEpv'
+    }
+});
 
 const sendMail = async (email, subjecte, htmlTemplate) => {
-  resend.emails.send({
-    from: 'onboarding@resend.dev',
+  transporter.sendMail({
+    from: 'hoyt.gleichner@ethereal.email',
     to: email,
     subject: subjecte,
     html: htmlTemplate
