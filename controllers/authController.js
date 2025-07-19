@@ -80,7 +80,7 @@ const verifyCode = async (req, res) => {
       });
     }
 
-    await AuthService.verifyCode(email,code);
+    const verificationCode = await AuthService.verifyCode(email,code);
 
     if (!verificationCode) {
       return res.status(400).json({
