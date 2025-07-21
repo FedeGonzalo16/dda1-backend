@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const recipeRoutes = require('./routes/recipes');
-const notificationRoutes = require('./routes/notifications');
 const ingredientRoutes = require('./routes/ingredients');
 const qualificationRoutes = require('./routes/qualifications');
 const prodecedureRoutes = require('./routes/procedures');
@@ -32,7 +31,6 @@ app.on('error', (err) => {
 app.use('/api/users', userRoutes);
 app.use('/api/login', authRoutes);
 app.use('/api/recipes', recipeRoutes);
-app.use('/api/notifications', notificationRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/qualifications', qualificationRoutes);
 app.use('/api/procedures', prodecedureRoutes);
