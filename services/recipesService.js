@@ -1,11 +1,11 @@
 //Con Mongo
 const Recipe = require("../db/models/Recipe");
 
-const getRecipes = async () => {
-    return await Recipe.find()
+const getRecipes = async (filter = { isApproved: true }) => {
+    return await Recipe.find(filter)
     .populate('ingredients')
     .populate('procedures')
-    .populate('author')
+    .populate('author');
   };
 
 const getRecipeById = async (id) => {
@@ -31,12 +31,14 @@ const getQualifications = async (id) => {
 };
 
 const createRecipe = async (recipeData) => {
+    const recipeWithApproval = { ...recipeData, isApproved: false };
     const newRecipe = new Recipe(recipeData);
     return await newRecipe.save();
 };
 
 const updateRecipe = async (id, recipeData) => {
-  const updatedRecipe = await Recipe.findByIdAndUpdate(id, recipeData, {
+  const updatedData = { ...recipeData, isApproved: false };
+  const updatedRecipe = await Recipe.findByIdAndUpdate(id, updatedData, {
     new: true,
   });
   return updatedRecipe;
@@ -47,7 +49,7 @@ const deleteRecipe = async (id) => {
     return deletedRecipe;
 };
 
-const getRecipeByName = async (name) => {
+const getRecipeByName = async (filter = { isApproved: true }) => {
   return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') })
     .populate('author')
     .populate('ingredients')
@@ -56,6 +58,13 @@ const getRecipeByName = async (name) => {
 
 
 const getRecipesByUserId = async (userId) => {
+  const filter = { author: userId };
+  if (!isAdmin) {
+    filter.$or = [
+      { isApproved: true },
+      { author: userId, isApproved: false }
+    ];
+  }
   return await Recipe.find({ author: userId })
     .populate('author')
     .populate('ingredients')
