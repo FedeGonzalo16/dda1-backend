@@ -37,7 +37,14 @@ const getQualificationsByRecipeId = async (req, res) => {
 
 const createQualification = async (req, res) => {
   try {
-    const newQualification = await QualificationsService.createQualification(req.body);
+    // Forzamos isApproved a false si no se especifica
+    const qualificationData = {
+      ...req.body,
+      isApproved: req.body.isApproved ?? false, 
+    };
+
+    const newQualification = await QualificationsService.createQualification(qualificationData);
+
     return res.status(201).json({
       method: "createQualification",
       message: "Qualification created successfully",
@@ -50,7 +57,8 @@ const createQualification = async (req, res) => {
       message: "Server Error",
     });
   }
-}
+};
+
 
 const approveQualification = async (req, res) => { /* aprobacion de calificaciones */
   const { id } = req.params;

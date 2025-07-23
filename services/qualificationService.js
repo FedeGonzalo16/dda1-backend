@@ -5,7 +5,7 @@ const getQualifications = async () => {
   };
 
 const getQualificationsByRecipeId = async (recipeId) => {
-    return await Qualification.find({ recipeId, approved: true }) // solo los aprobados
+    return await Qualification.find({ recipeId, isApproved: true }) // solo los aprobados
       .populate('author');
 };
 
@@ -13,12 +13,12 @@ const createQualification = async (qualificationData) => {
     const newQualification = new Qualification(qualificationData);
     return await Qualification.create({  /* que se cree como no aprobado */
       ...qualificationData, 
-      approved: false 
+      isApproved: false 
   });
 };
 
 const getPendingQualifications = async () => {
-  return await Qualification.find({ approved: false })
+  return await Qualification.find({ isApproved: false })
   .populate('author');
 };
 
@@ -32,7 +32,7 @@ const approveQualification = async (id) => {
 };
 
 const getApprovedQualifications = async () => {
-  return await Qualification.find({ approved: true })
+  return await Qualification.find({ isApproved: true })
   .populate('author');
 };
 
