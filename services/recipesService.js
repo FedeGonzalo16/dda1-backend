@@ -1,8 +1,8 @@
 //Con Mongo
 const Recipe = require("../db/models/Recipe");
 
-const getRecipes = async (filter = { isApproved: true }) => {
-    return await Recipe.find(filter)
+const getRecipes = async () => {
+    return await Recipe.find()
     .populate('ingredients')
     .populate('procedures')
     .populate('author');
@@ -49,7 +49,7 @@ const deleteRecipe = async (id) => {
     return deletedRecipe;
 };
 
-const getRecipeByName = async (filter = { isApproved: true }) => {
+const getRecipeByName = async (name) => {
   return await Recipe.findOne({ name: new RegExp(`^${name}$`, 'i') })
     .populate('author')
     .populate('ingredients')
@@ -58,13 +58,6 @@ const getRecipeByName = async (filter = { isApproved: true }) => {
 
 
 const getRecipesByUserId = async (userId) => {
-  const filter = { author: userId };
-  if (!isAdmin) {
-    filter.$or = [
-      { isApproved: true },
-      { author: userId, isApproved: false }
-    ];
-  }
   return await Recipe.find({ author: userId })
     .populate('author')
     .populate('ingredients')
