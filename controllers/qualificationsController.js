@@ -16,6 +16,7 @@ const getQualifications = async (req, res) => {
     });
   }
 };
+
 const getQualificationsByRecipeId = async (req, res) => {
   const { recipeId } = req.params;
   try {
@@ -36,7 +37,14 @@ const getQualificationsByRecipeId = async (req, res) => {
 
 const createQualification = async (req, res) => {
   try {
-    const newQualification = await QualificationsService.createQualification(req.body);
+    // Forzamos isApproved a false si no se especifica
+    const qualificationData = {
+      ...req.body,
+      isApproved: req.body.isApproved ?? false, 
+    };
+
+    const newQualification = await QualificationsService.createQualification(qualificationData);
+
     return res.status(201).json({
       method: "createQualification",
       message: "Qualification created successfully",
@@ -49,10 +57,74 @@ const createQualification = async (req, res) => {
       message: "Server Error",
     });
   }
-}
+};
+
+
+const approveQualification = async (req, res) => { /* aprobacion de calificaciones */
+  const { id } = req.params;
+
+  try {
+    const qualification = await QualificationsService.approveQualification(id);
+    if (!qualification) {
+      return res.status(404).json({
+        method: "approveQualification",
+        message: "Qualification not found",
+      });
+    }
+
+    return res.status(200).json({
+      method: "approveQualification",
+      message: "Qualification approved successfully",
+      qualification,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "approveQualification",
+      message: "Server Error",
+    });
+  }
+};
+
+const getApprovedQualifications = async (req, res) => {
+  try {
+    const qualifications = await QualificationsService.getApprovedQualifications();
+    return res.status(200).json({
+      method: "getApprovedQualifications",
+      message: "Approved qualifications retrieved successfully",
+      qualifications,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getApprovedQualifications",
+      message: "Server Error",
+    });
+  }
+};
+
+const getPendingQualifications = async (req, res) => {
+  try {
+    const qualifications = await QualificationsService.getPendingQualifications();
+    return res.status(200).json({
+      method: "getPendingQualifications",
+      message: "Pending qualifications retrieved successfully",
+      qualifications,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      method: "getPendingQualifications",
+      message: "Server Error",
+    });
+  }
+};
 
 module.exports = {
   getQualifications,
   getQualificationsByRecipeId,
-  createQualification
+  createQualification,
+  approveQualification, 
+  getApprovedQualifications,
+  getPendingQualifications
 };

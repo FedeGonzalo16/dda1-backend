@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const getRecipes = async (req, res) => {
   try {
     const recipes = await RecipesService.getRecipes();
+    const filter = req.user?.role === 'admin' ? {} : { isApproved: true };
     return res.status(200).json({
       method: "getRecipes",
       message: "Recipes retrieved successfully",
@@ -185,6 +186,7 @@ const updateRecipe = async (req, res) => {
       ingredients: parsedIngredients,
       description: description || '',
       type: type || 'Plato principal',
+      isApproved: false,
     };
     if (imageUrl && imageUrl !== '') {
       recipeData.image = imageUrl;
@@ -280,6 +282,14 @@ const aproveRecipe = async (req, res) => {
   const { id } = req.params;
   try {
     const recipe = await RecipesService.aproveRecipe(id);
+
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        method: "approveRecipe",
+        message: "No autorizado"
+      });
+    }
+
     if (!recipe) {
       return res.status(404).json({
         method: "aproveRecipe",

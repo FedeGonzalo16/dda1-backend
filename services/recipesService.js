@@ -5,7 +5,7 @@ const getRecipes = async () => {
     return await Recipe.find()
     .populate('ingredients')
     .populate('procedures')
-    .populate('author')
+    .populate('author');
   };
 
 const getRecipeById = async (id) => {
@@ -31,12 +31,14 @@ const getQualifications = async (id) => {
 };
 
 const createRecipe = async (recipeData) => {
+    const recipeWithApproval = { ...recipeData, isApproved: false };
     const newRecipe = new Recipe(recipeData);
     return await newRecipe.save();
 };
 
 const updateRecipe = async (id, recipeData) => {
-  const updatedRecipe = await Recipe.findByIdAndUpdate(id, recipeData, {
+  const updatedData = { ...recipeData, isApproved: false };
+  const updatedRecipe = await Recipe.findByIdAndUpdate(id, updatedData, {
     new: true,
   });
   return updatedRecipe;
