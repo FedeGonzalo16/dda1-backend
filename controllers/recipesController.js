@@ -1,8 +1,5 @@
 const RecipesService = require('../services/recipesService');
 const CloudinaryService = require('../services/cloudinary');
-const IngredientsService = require('../services/ingredientsService');
-const ProcedimentsService = require('../services/proceduresService');
-const mongoose = require('mongoose');
 
 const getRecipes = async (req, res) => {
   try {
@@ -282,13 +279,6 @@ const aproveRecipe = async (req, res) => {
   const { id } = req.params;
   try {
     const recipe = await RecipesService.aproveRecipe(id);
-
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        method: "approveRecipe",
-        message: "No autorizado"
-      });
-    }
 
     if (!recipe) {
       return res.status(404).json({
